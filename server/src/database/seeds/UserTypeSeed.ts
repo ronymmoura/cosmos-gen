@@ -1,4 +1,4 @@
-export const UserTypeSeed = [
+const UserTypeSeed = [
   {
     name: 'Common',
     code: 'CMN',
@@ -9,4 +9,6 @@ export const UserTypeSeed = [
     code: 'ADM',
     isActive: true
   }
-]
+];
+
+export { UserTypeSeed };

@@ -5,13 +5,20 @@ import { AppApi } from '@entities/AppApi';
 
 import { AppRepository } from '@repositories/AppRepository';
 import { AppApiRepository } from '@repositories/AppApiRepository';
+import jwtConfig from '@config/jwt';
+import jwt from 'express-jwt';
 
 export class AppApisController {
   static routes () : Router {
     const router = Router();
 
-    router.get('/appApis', AppApisController.list);
-    router.get('/appApis/:id', AppApisController.get);
+    router.get(
+      '/appApis',
+      AppApisController.list);
+
+    router.get(
+      '/appApis/:id',
+      AppApisController.get);
 
     router.post(
       '/appApis',

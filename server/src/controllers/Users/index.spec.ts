@@ -7,8 +7,12 @@ import { User } from '@entities/User';
 import connection from '@database/connection';
 import { UserTypeSeed } from '@database/seeds/UserTypeSeed';
 import { UserType } from '@entities/UserType';
+import { UserSeed } from '@database/seeds/UserSeed';
+import { login } from '@helpers/tests';
 
 const request = supertest(app);
+
+var token = '';
 
 const mockData = {
   name: 'Test',
@@ -30,6 +34,8 @@ describe('UsersController', () => {
     await connection.create();
 
     await getRepository(UserType).save(UserTypeSeed);
+
+    token = await login();
   });
 
   afterAll(async () => {
@@ -37,7 +43,9 @@ describe('UsersController', () => {
   });
 
   it('should create a new user', async done => {
-    const res = await request.post('/users')
+    const res = await request
+      .post('/users')
+      .set('Authorization', `Bearer ${token}`)
       .attach('avatar', path.join(__dirname, 'imageTest.jpg'))
       .field('name', mockData.name)
       .field('email', mockData.email)
@@ -53,7 +61,9 @@ describe('UsersController', () => {
   });
 
   it('should list users', async done => {
-    const res = await request.get('/users');
+    const res = await request
+      .get('/users')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.length > 0).toBeTruthy();
@@ -63,7 +73,9 @@ describe('UsersController', () => {
   });
 
   it('should get an user', async done => {
-    const res = await request.get(`/users/${mockDataID}`);
+    const res = await request
+      .get(`/users/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.id).toEqual(mockDataID);
@@ -72,7 +84,9 @@ describe('UsersController', () => {
   });
 
   it('should edit an user', async done => {
-    const res = await request.put('/users')
+    const res = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${token}`)
       .attach('avatar', path.join(__dirname, 'imageTest.jpg'))
       .field('id', mockDataID)
       .field('name', mockDataEdited.name)
@@ -81,7 +95,9 @@ describe('UsersController', () => {
 
     expect(res.status).toBe(200);
 
-    const res2 = await request.get(`/users/${mockDataID}`);
+    const res2 = await request
+      .get(`/users/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     const user = res2.body as User;
 
@@ -96,7 +112,9 @@ describe('UsersController', () => {
   });
 
   it('should validate if old password match', async done => {
-    const res = await request.put('/users/updatePassword')
+    const res = await request
+      .put('/users/updatePassword')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         id: mockDataID,
         oldPassword: 'asd',
@@ -109,7 +127,9 @@ describe('UsersController', () => {
   });
 
   it('should update the password', async done => {
-    const res = await request.put('/users/updatePassword')
+    const res = await request
+      .put('/users/updatePassword')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         id: mockDataID,
         oldPassword: mockData.password,
@@ -122,7 +142,9 @@ describe('UsersController', () => {
   });
 
   it('should delete an user', async done => {
-    const res = await request.delete(`/users/${mockDataID}`);
+    const res = await request
+      .delete(`/users/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
 

@@ -18,6 +18,7 @@ module.exports = {
           "@config/*": "./src/config/*",
           "@repositories/*": "./src/repositories/*",
           "@database/*": "./src/database/*",
+          "@helpers/*": "./src/helpers/*",
           "@src/*": "./src/*",
           "@root/*": "./*"
         }

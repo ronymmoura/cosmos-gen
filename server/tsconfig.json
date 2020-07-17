@@ -16,6 +16,7 @@
       "@config/*": ["./src/config/*"],
       "@database/*": ["./src/database/*"],
       "@repositories/*": ["./src/repositories/*"],
+      "@helpers/*": ["./src/helpers/*"],
       "@src/*": ["./src/*"],
       "@root/*": ["./*"]
     },
@@ -28,8 +29,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"

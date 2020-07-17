@@ -8,7 +8,7 @@ import multer from 'multer';
 import multerConfig from '@config/multer';
 import { celebrate } from 'celebrate';
 import Joi from '@hapi/joi';
-import constants from '@config/constants';
+import jwtConfig from '@config/jwt';
 
 const upload = multer(multerConfig);
 
@@ -98,14 +98,14 @@ export class UsersController {
       var { newPassword, oldPassword, id } = req.body;
       const userRepository = new UsersRepository();
 
-      oldPassword = crypto.createHmac('sha256', constants.salt).update(oldPassword).digest('hex');
+      oldPassword = crypto.createHmac('sha256', jwtConfig.secret).update(oldPassword).digest('hex');
 
       const user = await userRepository.get(id);
 
       if (user.password !== oldPassword)
         throw new Error('Old Password do not match');
 
-      newPassword = crypto.createHmac('sha256', constants.salt).update(newPassword).digest('hex');
+      newPassword = crypto.createHmac('sha256', jwtConfig.secret).update(newPassword).digest('hex');
       user.password = newPassword;
 
       await userRepository.update(user);

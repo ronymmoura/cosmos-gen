@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-import path from 'path';
 
 import app from '@src/app';
 import connection from '@database/connection';
@@ -15,8 +14,11 @@ import { AppApi } from '@entities/AppApi';
 import { App } from '@entities/App';
 import { User } from '@entities/User';
 import { UserSeed } from '@database/seeds/UserSeed';
+import { login } from '@helpers/tests';
 
 const request = supertest(app);
+
+var token = '';
 
 const mockData = {
   name: 'Homolog',
@@ -37,10 +39,12 @@ var mockDataID = 0;
 describe('AppApisController', () => {
   beforeAll(async () => {
     await connection.create();
+
     await getRepository(UserType).save(UserTypeSeed);
     await getRepository(AppType).save(AppTypeSeed);
-    await getRepository(User).save(UserSeed);
     await getRepository(App).save(AppSeed);
+
+    token = await login();
   });
 
   afterAll(async () => {
@@ -48,7 +52,9 @@ describe('AppApisController', () => {
   });
 
   it('should create a new api', async done => {
-    const res = await request.post('/appApis')
+    const res = await request
+      .post('/appApis')
+      .set('Authorization', `Bearer ${token}`)
       .send(mockData);
 
     mockDataID = res.body;
@@ -60,7 +66,9 @@ describe('AppApisController', () => {
   });
 
   it('should list apis', async done => {
-    const res = await request.get('/appApis');
+    const res = await request
+      .get('/appApis')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.length > 0).toBeTruthy();
@@ -70,7 +78,9 @@ describe('AppApisController', () => {
   });
 
   it('should get an app', async done => {
-    const res = await request.get(`/appApis/${mockDataID}`);
+    const res = await request
+      .get(`/appApis/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.id).toEqual(mockDataID);
@@ -79,12 +89,16 @@ describe('AppApisController', () => {
   });
 
   it('should edit an api', async done => {
-    const res = await request.put('/appApis')
+    const res = await request
+      .put('/appApis')
+      .set('Authorization', `Bearer ${token}`)
       .send(mockDataEdited);
 
     expect(res.status).toBe(200);
 
-    const res2 = await request.get(`/appApis/${mockDataID}`);
+    const res2 = await request
+      .get(`/appApis/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     const api = res2.body as AppApi;
 
@@ -100,7 +114,9 @@ describe('AppApisController', () => {
   });
 
   it('should delete an app', async done => {
-    const res = await request.delete(`/appApis/${mockDataID}`);
+    const res = await request
+      .delete(`/appApis/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
 

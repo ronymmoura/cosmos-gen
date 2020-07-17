@@ -1,4 +1,4 @@
-export const AppApiSeed = [
+const AppApiSeed = [
   {
     name: 'Homolog',
     url: 'http://10.10.170.11/Api',
@@ -6,3 +6,5 @@ export const AppApiSeed = [
     isActive: true
   }
 ]
+
+export { AppApiSeed };

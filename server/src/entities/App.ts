@@ -21,9 +21,6 @@ export class App {
   @ManyToOne(type => AppType, appType => appType.apps)
   appType: AppType;
 
-  @OneToMany(type => AppVersion, appVersion => appVersion.app)
-  appVersions: AppVersion[];
-
   @OneToMany(type => AppApi, appApi => appApi.app)
   appUrls: AppApi[];
 }

@@ -1,4 +1,4 @@
-export const AppTypeSeed = [
+const AppTypeSeed = [
   {
     name: '.Net Core API',
     isActive: true,
@@ -25,3 +25,5 @@ export const AppTypeSeed = [
     icon: 'desktop'
   }
 ]
+
+export { AppTypeSeed };

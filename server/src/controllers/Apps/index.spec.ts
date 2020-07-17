@@ -9,8 +9,13 @@ import { UserType } from '@entities/UserType';
 import { UserTypeSeed } from '@database/seeds/UserTypeSeed';
 import { AppType } from '@entities/AppType';
 import { AppTypeSeed } from '@database/seeds/AppTypeSeed';
+import { User } from '@entities/User';
+import { UserSeed } from '@database/seeds/UserSeed';
+import { login } from '@helpers/tests';
 
 const request = supertest(app);
+
+var token = '';
 
 const mockData = {
   name: 'App 1',
@@ -30,6 +35,8 @@ describe('AppsController', () => {
     await connection.create();
     await getRepository(UserType).save(UserTypeSeed);
     await getRepository(AppType).save(AppTypeSeed);
+
+    token = await login();
   });
 
   afterAll(async () => {
@@ -37,7 +44,9 @@ describe('AppsController', () => {
   });
 
   it('should create a new app', async done => {
-    const res = await request.post('/apps')
+    const res = await request
+      .post('/apps')
+      .set('Authorization', `Bearer ${token}`)
       .attach('image', path.join(__dirname, 'imageTest.jpg'))
       .field('name', mockData.name)
       .field('userId', mockData.userId)
@@ -52,7 +61,9 @@ describe('AppsController', () => {
   });
 
   it('should list apps', async done => {
-    const res = await request.get('/apps');
+    const res = await request
+      .get('/apps')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.length > 0).toBeTruthy();
@@ -62,7 +73,9 @@ describe('AppsController', () => {
   });
 
   it('should get an app', async done => {
-    const res = await request.get(`/apps/${mockDataID}`);
+    const res = await request
+      .get(`/apps/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.id).toEqual(mockDataID);
@@ -71,7 +84,9 @@ describe('AppsController', () => {
   });
 
   it('should edit an app', async done => {
-    const res = await request.put('/apps')
+    const res = await request
+      .put('/apps')
+      .set('Authorization', `Bearer ${token}`)
       .attach('image', path.join(__dirname, 'imageTest.jpg'))
       .field('id', mockDataID)
       .field('name', mockDataEdited.name)
@@ -79,7 +94,9 @@ describe('AppsController', () => {
 
     expect(res.status).toBe(200);
 
-    const res2 = await request.get(`/apps/${mockDataID}`);
+    const res2 = await request
+      .get(`/apps/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     const app = res2.body as App;
 
@@ -93,7 +110,9 @@ describe('AppsController', () => {
   });
 
   it('should delete an app', async done => {
-    const res = await request.delete(`/apps/${mockDataID}`);
+    const res = await request
+      .delete(`/apps/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
 

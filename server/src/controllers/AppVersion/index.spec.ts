@@ -15,8 +15,11 @@ import { AppSeed } from '@database/seeds/AppSeed';
 import { AppVersion } from '@entities/AppVersion';
 import { AppApi } from '@entities/AppApi';
 import { AppApiSeed } from '@database/seeds/AppApiSeed';
+import { login } from '@helpers/tests';
 
 const request = supertest(app);
+
+var token = '';
 
 const mockData = {
   version: '1.0.0',
@@ -36,9 +39,10 @@ describe('AppVersionsController', () => {
 
     await getRepository(UserType).save(UserTypeSeed);
     await getRepository(AppType).save(AppTypeSeed);
-    await getRepository(User).save(UserSeed);
     await getRepository(App).save(AppSeed);
     await getRepository(AppApi).save(AppApiSeed);
+
+    token = await login();
   });
 
   afterAll(async () => {
@@ -46,7 +50,9 @@ describe('AppVersionsController', () => {
   });
 
   it('should create a new version', async done => {
-    const res = await request.post('/appVersions')
+    const res = await request
+      .post('/appVersions')
+      .set('Authorization', `Bearer ${token}`)
       .attach('file', path.join(__dirname, 'fileTest.txt'))
       .field('version', mockData.version)
       .field('apiId', mockData.apiId);
@@ -60,7 +66,9 @@ describe('AppVersionsController', () => {
   });
 
   it('should list versions', async done => {
-    const res = await request.get('/appVersions');
+    const res = await request
+      .get('/appVersions')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.length > 0).toBeTruthy();
@@ -70,7 +78,9 @@ describe('AppVersionsController', () => {
   });
 
   it('should get a version', async done => {
-    const res = await request.get(`/appVersions/${mockDataID}`);
+    const res = await request
+      .get(`/appVersions/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.id).toEqual(mockDataID);
@@ -79,7 +89,9 @@ describe('AppVersionsController', () => {
   });
 
   it('should edit a version', async done => {
-    const res = await request.put('/appVersions')
+    const res = await request
+      .put('/appVersions')
+      .set('Authorization', `Bearer ${token}`)
       .attach('file', path.join(__dirname, 'fileTest.txt'))
       .field('id', mockDataID)
       .field('version', mockDataEdited.version)
@@ -87,7 +99,9 @@ describe('AppVersionsController', () => {
 
     expect(res.status).toBe(200);
 
-    const res2 = await request.get(`/appVersions/${mockDataID}`);
+    const res2 = await request
+      .get(`/appVersions/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     const version = res2.body as AppVersion;
 
@@ -101,7 +115,9 @@ describe('AppVersionsController', () => {
   });
 
   it('should delete a version', async done => {
-    const res = await request.delete(`/appVersions/${mockDataID}`);
+    const res = await request
+      .delete(`/appVersions/${mockDataID}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
 

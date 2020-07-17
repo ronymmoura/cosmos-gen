@@ -1,4 +1,4 @@
-export const AppSeed = [
+const AppSeed = [
   {
     name: 'App 1',
     image: '',
@@ -6,3 +6,4 @@ export const AppSeed = [
     appTypeId: 1
   }
 ];
+export { AppSeed };
