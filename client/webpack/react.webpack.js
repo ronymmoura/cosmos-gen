@@ -1,12 +1,22 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-const rootPath = path.resolve(__dirname, '..')
+const rootPath = path.resolve(__dirname, '..');
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
+  mode: isDevelopment ? 'development' : 'production',
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    mainFields: ['main', 'module', 'browser']
+    mainFields: ['main', 'module', 'browser'],
+    alias: {
+      '@styles': path.resolve(__dirname, '..', 'src', 'styles'),
+      '@pages': path.resolve(__dirname, '..', 'src', 'pages'),
+      '@components': path.resolve(__dirname, '..', 'src', 'components'),
+      '@context': path.resolve(__dirname, '..', 'src', 'context')
+    }
   },
   entry: path.resolve(rootPath, 'src', 'App.tsx'),
   target: 'electron-renderer',
@@ -36,6 +46,9 @@ module.exports = {
     publicPath: './'
   },
   plugins: [
-    new HtmlWebpackPlugin()
-  ]
+    new HtmlWebpackPlugin({
+      template: path.resolve(rootPath, 'index.html')
+    }),
+    isDevelopment && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
 }

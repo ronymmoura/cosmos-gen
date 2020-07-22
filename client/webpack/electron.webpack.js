@@ -1,10 +1,18 @@
 const path = require('path')
 
-const rootPath = path.resolve(__dirname, '..')
+const rootPath = path.resolve(__dirname, '..');
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@styles': path.resolve(__dirname, '..', 'src', 'styles'),
+      '@pages': path.resolve(__dirname, '..', 'src', 'pages'),
+      '@components': path.resolve(__dirname, '..', 'src', 'components'),
+      '@context': path.resolve(__dirname, '..', 'src', 'context')
+    }
   },
   devtool: 'source-map',
   entry: path.resolve(rootPath, 'electron', 'main.ts'),
@@ -20,11 +28,17 @@ module.exports = {
       }
     ]
   },
-  node: {
-    __dirname: false
-  },
   output: {
     path: path.resolve(rootPath, 'dist'),
     filename: '[name].js'
+  },
+  /**
+   * Disables webpack processing of __dirname and __filename.
+   * If you run the bundle in node.js it falls back to these values of node.js.
+   * https://github.com/webpack/webpack/issues/2010
+   */
+  node: {
+    __dirname: false,
+    __filename: false
   }
 }
